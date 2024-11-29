@@ -48,6 +48,9 @@ export const updateSession = async (request: NextRequest) => {
       return NextResponse.redirect(new URL("/protected", request.url));
     }
 
+    response.headers.append('Access-Control-Allow-Origin', '*');
+    response.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
