@@ -4,100 +4,14 @@ import {
   Table,
   TableBody,
   TableCaption,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ChevronRight } from "lucide-react"
+import DialogEdit from "@/components/dialog-edit";
+import { LayoffEvent } from "@/components/dialog-edit";
 
 const localhost = "http://localhost:3000";
-
-type LayoffEvent = {
-  layoffid: string;
-  layoffdate: string;
-  companyname: string;
-  layoffamount: number;
-};
-
-function updateEntry() {
-  console.log("Updating entry...");
-}
-function deleteEntry() {
-  console.log("Deleting entry...");
-} 
-
-function getTableRows(data: Array<LayoffEvent>) {
-  return (
-    <TableBody>
-      {data.map((layoffevent: LayoffEvent) => (
-        <TableRow key={layoffevent.layoffid}>
-          <TableCell className="font-medium">{layoffevent.layoffid}</TableCell>
-          <TableCell>{layoffevent.layoffdate}</TableCell>
-          <TableCell>{layoffevent.companyname}</TableCell>
-          <TableCell className="text-right">
-            {layoffevent.layoffamount}
-          </TableCell>
-          <TableCell>
-            <Dialog>
-              <DialogTrigger asChild>
-              <Button variant="outline" size="icon">
-                  <ChevronRight />
-              </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit Entry</DialogTitle>
-                  <DialogDescription>
-                    Alter the database entry for this layoff event.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="layoffdate" className="text-right">
-                      Date
-                    </Label>
-                    <Input
-                      id="layoffdate"
-                      defaultValue={layoffevent.layoffdate}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="layoffamount" className="text-right">
-                      Amount
-                    </Label>
-                    <Input
-                      id="layoffamount"
-                      defaultValue={layoffevent.layoffamount}
-                      className="col-span-3"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit" onClick={updateEntry}>Save Changes</Button>
-                  <Button type="submit" variant="destructive" onClick={deleteEntry}>Delete Entry</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  );
-}
 
 export default async function Index() {
   const layoffresponse = await fetch(`${localhost}/api/LayoffEvents`);
@@ -121,7 +35,11 @@ export default async function Index() {
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            {getTableRows(layoffdata.data)}
+            <TableBody>
+              {layoffdata.data.map((layoffevent : LayoffEvent) => (
+                <DialogEdit key={layoffevent.layoffid} {...layoffevent} />
+              ))}
+            </TableBody>
           </Table>
         </div>
       </main>

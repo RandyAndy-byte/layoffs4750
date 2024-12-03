@@ -46,18 +46,27 @@ export const POST = async (
 };
 
 export const PUT = async (
-  req: NextRequest,
-  { params, query }: { params: { "id" : number, "layoffdate" : string, "layoffamount" : number }; query: {} }
+  req: NextRequest
 ) => {
-  return NextResponse.json({ message: "PUT request received" });
+    const { id, amount, date } = await req.json();
+    const supabase = await createClient();
+    const { data: layoffevent, error } = await supabase.from("layoffevent").update({ layoffamount: amount, layoffdate: date }).eq('layoffid', id).select();
+    if (error) {
+        console.error("Error updating data in database:", error);
+        return NextResponse.json(
+            { error: "Internal server error" },
+            { status: 500 }
+        );
+    }
+  return NextResponse.json({ message: `Update of layoff event ${id} successful` }, { status: 200 });
 };
 
 export const DELETE = async (
-  req: NextRequest,
-  { params, query }: { params: { "id" : number }; query: {} }
+  req: NextRequest
 ) => {
+    const { id } = await req.json();
     const supabase = await createClient();
-    const { data: layoffevent, error } = await supabase.from("layoffevent").delete().eq('layoffid', params.id);
+    const { data: layoffevent, error } = await supabase.from("layoffevent").delete().eq('layoffid', id);
     if (error) {
         console.error("Error deleting data from database:", error);
         return NextResponse.json(
@@ -65,5 +74,5 @@ export const DELETE = async (
             { status: 500 }
         );
     }
-    return NextResponse.json({ message: `Deletion of layoff event ${params.id} successful` }, { status: 200 });
+    return NextResponse.json({ message: `Deletion of layoff event ${id} successful` }, { status: 200 });
 };
