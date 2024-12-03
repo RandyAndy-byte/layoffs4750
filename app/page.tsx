@@ -2,20 +2,14 @@ import Hero from "@/components/hero";
 import { ModeToggle } from "@/components/toggle";
 import {
   Table,
-  TableBody,
   TableCaption,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DialogEdit from "@/components/dialog-edit";
-import { LayoffEvent } from "@/components/dialog-edit";
-
-const localhost = "http://localhost:3000";
+import TableEntries from "@/components/table-entries";
 
 export default async function Index() {
-  const layoffresponse = await fetch(`${localhost}/api/LayoffEvents`);
-  const layoffdata = await layoffresponse.json();
   return (
     <>
       <main className="flex-1 flex flex-col gap-6 px-4">
@@ -35,11 +29,7 @@ export default async function Index() {
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {layoffdata.data.map((layoffevent : LayoffEvent) => (
-                <DialogEdit key={layoffevent.layoffid} {...layoffevent} />
-              ))}
-            </TableBody>
+            <TableEntries />
           </Table>
         </div>
       </main>

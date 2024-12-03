@@ -3,8 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 // https://dev.to/spencerlepine/get-post-put-delete-with-nextjs-app-router-5do0
 
 export const GET = async (
-  req: NextRequest,
-  { params, query }: { params: {}; query: {} }
+  req: NextRequest
 ) => {
   const supabase = await createClient();
 
@@ -39,10 +38,20 @@ export const GET = async (
 };
 
 export const POST = async (
-  req: NextRequest,
-  { params, query }: { params: { "companyname":string,"layoffdate" : string, "layoffamount" : number}; query: {} }
+  req: NextRequest
 ) => {
-  return NextResponse.json({ message: "POST request received" });
+  const { name, amount, date } = await req.json();
+  const supabase = await createClient();
+  const { data: layoffevent, error } = await supabase.from("layoffevent").insert([{ companyname: name, layoffamount: amount, layoffdate: date }]).select();
+
+  if (error) {
+    console.error("Error inserting data into database:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({ message: `Entry on ${date} added for ${name}` }, { status: 200 });
 };
 
 export const PUT = async (

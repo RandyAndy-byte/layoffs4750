@@ -25,7 +25,12 @@ export type LayoffEvent = {
 
 const localhost = "http://localhost:3000";
 
-export default function DialogEdit(layoffevent: LayoffEvent) {
+type DialogEditProps = {
+  layoffevent: LayoffEvent;
+  entryDeleted: () => void;
+}
+
+export default function DialogEdit({layoffevent, entryDeleted}: DialogEditProps) {
 
   const [layoffdate, setLayoffDate] = useState(layoffevent.layoffdate);
   const [layoffamount, setLayoffAmount] = useState(layoffevent.layoffamount);
@@ -38,6 +43,7 @@ export default function DialogEdit(layoffevent: LayoffEvent) {
       body: JSON.stringify({ id }),
     });
     const data = await response.json();
+    entryDeleted();
     console.log(data.message);
   };
 
